@@ -1,5 +1,4 @@
 import 'package:bugle/account_button.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'auth.dart';
@@ -18,7 +17,6 @@ class _FloatingSearchBarState extends State<FloatingSearchBar> {
 
   @override
   Widget build(BuildContext context) {
-    final ColorScheme themeColors = Theme.of(context).colorScheme;
     return Scaffold(
       body: SafeArea(
         child: Stack(
@@ -30,46 +28,21 @@ class _FloatingSearchBarState extends State<FloatingSearchBar> {
               top: 10.0,
               left: 16.0,
               right: 16.0,
-              child: Material(
-                shape: const StadiumBorder(),
-                color: themeColors.secondaryContainer,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Row(
-                    children: [
-                      // The menu button
-                      Builder(
-                        builder: (context) {
-                          return IconButton(
-                            icon: const Icon(Icons.menu),
-                            onPressed: () {
-                              // Open the drawer
-                              Scaffold.of(context).openDrawer();
-                            },
-                          );
-                        },
-                      ),
-                      // The search field
-                      Expanded(
-                        child: TextField(
-                          controller: _controller,
-                          decoration: const InputDecoration(
-                            hintText: 'Search',
-                            border: InputBorder.none,
-                          ),
-                          onSubmitted: (value) {
-                            // Perform the search
-                            if (kDebugMode) {
-                              print('Searching for $value');
-                            }
-                          },
-                        ),
-                      ),
-                      // The profile picture
-                      const AccountButton(),
-                    ],
-                  ),
+              child: SearchBar(
+                leading: Builder( // this builder is needed to provide a context for the IconButton below
+                  builder: (context) {
+                    return IconButton(
+                      icon: const Icon(Icons.menu),
+                      onPressed: () {
+                        // Open the drawer
+                        Scaffold.of(context).openDrawer(); // opens the side drawer
+                      },
+                    );
+                  },
                 ),
+                controller: _controller,
+                hintText: 'Search',
+                trailing: const [AccountButton(),],
               ),
             ), // end searchbar
           ],

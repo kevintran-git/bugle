@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
-    const seedColor = Colors.blueAccent;
+    const seedColor = Colors.green;
     // Define the navigation items for the responsive navigation layout.
     // Each item contains an icon, a selected icon, a title, and a screen to navigate to.
     const List<ResponsiveNavigationDestination> destinations =
@@ -65,12 +65,12 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           useMaterial3: true, // Enable Material 3 theme
           colorScheme: ColorScheme.fromSeed(
-              seedColor: seedColor, brightness: Brightness.light),
+              seedColor: seedColor, brightness: Brightness.light, shadow: Colors.transparent),
         ),
         darkTheme: ThemeData(
           useMaterial3: true, // Enable Material 3 theme
           colorScheme: ColorScheme.fromSeed(
-              seedColor: seedColor, brightness: Brightness.dark),
+              seedColor: seedColor, brightness: Brightness.dark, shadow: Colors.transparent),
         ),
         themeMode: ThemeMode.system, // Follow system theme
         home: Consumer<MyAppState>(

@@ -14,6 +14,12 @@ doc/api/
 # dotenv environment variables file
 .env*
 
+# exclude IDE specific files
+*.iml
+.idea/
+.vscode/
+.DS_Store
+
 # Avoid committing generated Javascript files:
 *.dart.js
 *.info.json      # Produced by the --dump-info flag.
