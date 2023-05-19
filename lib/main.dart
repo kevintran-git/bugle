@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:bugle/auth.dart';
+import 'package:bugle/chat.dart';
 import 'package:bugle/friends_list.dart';
 import 'package:bugle/search_bar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -16,12 +16,10 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
   // sign in anonymously only if not already signed in then run app
-  if (FirebaseAuth.instance.currentUser == null) {
-    await Authentication().signInAnonymously();
-  }
-
+  // if (FirebaseAuth.instance.currentUser == null) {
+  //   await Authentication().signInAnonymously();
+  // }
   runApp(const MyApp());
 }
 
@@ -50,7 +48,7 @@ class MyApp extends StatelessWidget {
         icon: Icon(Icons.calendar_month_rounded),
         selectedIcon: Icon(Icons.calendar_month),
         title: 'Availability',
-        screen: MyHomePage(title: 'Availability'),
+        screen: ChatWidget(),
       ),
     ];
 
@@ -65,12 +63,16 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           useMaterial3: true, // Enable Material 3 theme
           colorScheme: ColorScheme.fromSeed(
-              seedColor: seedColor, brightness: Brightness.light, shadow: Colors.transparent),
+              seedColor: seedColor,
+              brightness: Brightness.light,
+              shadow: Colors.transparent),
         ),
         darkTheme: ThemeData(
           useMaterial3: true, // Enable Material 3 theme
           colorScheme: ColorScheme.fromSeed(
-              seedColor: seedColor, brightness: Brightness.dark, shadow: Colors.transparent),
+              seedColor: seedColor,
+              brightness: Brightness.dark,
+              shadow: Colors.transparent),
         ),
         themeMode: ThemeMode.system, // Follow system theme
         home: Consumer<MyAppState>(
@@ -220,17 +222,19 @@ class _MyHomePageState extends State<MyHomePage> {
             const SizedBox(height: 12),
 
             Card(
-                color: theme.colorScheme.primary,
-                child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: AnimatedSize(
-                      duration: const Duration(milliseconds: 200),
-                      child: // theme.textTheme.displayMedium
-                          Text(
-                        '$_counter',
-                        style: style.copyWith(fontWeight: FontWeight.w200),
-                      ),
-                    )))
+              color: theme.colorScheme.primary,
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: AnimatedSize(
+                  duration: const Duration(milliseconds: 200),
+                  child: // theme.textTheme.displayMedium
+                      Text(
+                    '$_counter',
+                    style: style.copyWith(fontWeight: FontWeight.w200),
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),

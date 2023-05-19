@@ -14,9 +14,8 @@ class Authentication {
       _instance; // links every call to the constructor to the same instance
   Authentication._internal(); // private constructor
 
-  // TODO: replace with your own client IDs
-
-  static const _clientId = kIsWeb ? _clientIdWeb : _clientIdIos;
+  static const _clientId = kIsWeb ? 
+  String.fromEnvironment("FIREBASE_CLIENTID_WEB") : String.fromEnvironment("FIREBASE_CLIENTID_IOS");
 
   // Firebase and Google Sign In objects
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -91,17 +90,11 @@ class Authentication {
         await _firebaseAuth.signInWithCredential(credential);
       }
     } on FirebaseAuthException catch (e) {
-      switch (e.code) {
-        case "credential-already-in-use":
-          await deleteUser();
-          // Sign in with Google credential
-          await _firebaseAuth.signInWithCredential(credential!);
-          break;
-        // See the API reference for the full list of error codes.
-        default:
-          if (kDebugMode) {
-            print(e);
-          }
+      await deleteUser();
+      // Sign in with Google credential
+      await _firebaseAuth.signInWithCredential(credential!);
+      if (kDebugMode) {
+        print(e);
       }
     }
   }
@@ -110,7 +103,8 @@ class Authentication {
     // delete if the user is anonymous
     if (_currentUser?.isAnonymous ?? false) {
       var friends = _currentUserRef?.collection('friends');
-      if(friends != null) { // delete all friends
+      if (friends != null) {
+        // delete all friends
         await friends.get().then((snapshot) {
           for (DocumentSnapshot ds in snapshot.docs) {
             ds.reference.delete();
