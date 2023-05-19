@@ -15,7 +15,6 @@ class ChatWidget extends StatefulWidget {
 }
 
 class _ChatWidgetState extends State<ChatWidget> {
-
   @override
   void initState() {
     super.initState();
@@ -65,7 +64,7 @@ class _ChatWidgetState extends State<ChatWidget> {
 
     _addMessage(textMessage);
     var chatbotResponse = await sendToGPT(message.text);
-    
+
     _addMessage(types.TextMessage(
       author: _bot,
       createdAt: DateTime.now().millisecondsSinceEpoch,
@@ -85,20 +84,28 @@ class _ChatWidgetState extends State<ChatWidget> {
             : OpenAIChatMessageRole.assistant,
       ));
     }
-
     OpenAIChatCompletionModel chatCompletion =
         await OpenAI.instance.chat.create(
       model: "gpt-3.5-turbo",
       messages: [
         const OpenAIChatCompletionChoiceMessageModel(
           content:
-              "You are a secretary robot that can help people schedule meetings. Your goal is to produce a list of times that work.", // TODO: Prompt engineer this!
+              """You are an executive assistant helping your boss schedule an event. Your goal is to produce a list of times that work. Output the options in markdown. Your boss has limitations on their schedule, including existing calendar events and busy preferences. When you schedule, make sure you are cognizant of their limited availabilities — so schedule thoughtfully! Thankfully, you are a world class executive assistant, so you are sure to schedule smartly. Here’s an example of the output you might generate:
+
+'Here are times that work for you based on your preferences:
+
+- Monday, May 15, 12 pm - 12:30 pm
+- Tuesday, May 18, 2 pm - 2:40 pm
+
+'
+
+Make sure you always provide the day of the week, date, then times in the format above. Today, the boss has given you this query to schedule. They have this calendar for the next week. And, they prefer that you respect these constraints on their schedule. Output a list of possible times.""",
           role: OpenAIChatMessageRole.system,
         ),
         ...previousMessages,
       ],
     );
-
+    print(chatCompletion.choices.first.message.content);
     return chatCompletion.choices.first.message.content;
   }
 
@@ -106,7 +113,7 @@ class _ChatWidgetState extends State<ChatWidget> {
     // Create a sample prompt using the Prompt class
     PaLMPrompt samplePrompt = PaLMPrompt(
         context: "",
-            //"You are a secretary robot that can help people schedule meetings. Your goal is to produce a list of times that work. Try not to ask for unnecessary information.",
+        //"You are a secretary robot that can help people schedule meetings. Your goal is to produce a list of times that work. Try not to ask for unnecessary information.",
         examples: {},
         messages: [...(_messages.reversed.map((e) => e.text).toList())],
         temperature: 0.25,
