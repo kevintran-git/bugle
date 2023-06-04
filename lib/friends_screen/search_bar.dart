@@ -1,7 +1,6 @@
-import 'package:bugle/account_button.dart';
+import 'package:bugle/firebase/auth.dart';
+import 'package:bugle/friends_screen/account_button.dart';
 import 'package:flutter/material.dart';
-
-import 'auth.dart';
 
 class FloatingSearchBar extends StatefulWidget {
   final Widget child;
@@ -65,14 +64,14 @@ class _FloatingSearchBarState extends State<FloatingSearchBar> {
             onTap: () {
               // Navigate to settings screen
               Navigator.pop(context);
-              Authentication().showSignOutDialog(context);
+              AuthProvider().showSignOutDialog(context);
             },
           ),
           ListTile(
             title: const Text('Anonymous'),
             leading: const Icon(Icons.login),
             onTap: () {
-              Authentication().signInAnonymously();
+              AuthProvider().signInAnonymously();
               Navigator.pop(context);
             },
           ),
@@ -81,7 +80,7 @@ class _FloatingSearchBarState extends State<FloatingSearchBar> {
             title: const Text('Delete Account'),
             leading: const Icon(Icons.delete),
             onTap: () {
-              Authentication().deleteUser();
+              AuthProvider().deleteUser();
               Navigator.pop(context);
             },
           ),

@@ -1,6 +1,7 @@
+import 'package:bugle/firebase/auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'auth.dart';
+
 
 class AccountButton extends StatelessWidget {
   const AccountButton({super.key});
@@ -8,7 +9,7 @@ class AccountButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<User?>(
-      stream: Authentication().userChanges,
+      stream: AuthProvider().userChanges,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.active) {
           final user = snapshot.data;
@@ -16,7 +17,7 @@ class AccountButton extends StatelessWidget {
             // avatar of the user. if on click, display dialog
             return InkWell(
               onTap: () {
-                Authentication().showSignOutDialog(context);
+                AuthProvider().showSignOutDialog(context);
               },
               child: CircleAvatar(
                 // placeholder if no photoURL
@@ -28,7 +29,7 @@ class AccountButton extends StatelessWidget {
           } else {
             return ElevatedButton.icon(
               onPressed: () async {
-                await Authentication().signInOrLinkWithGoogle();
+                await AuthProvider().signInOrLinkWithGoogle();
               },
               icon: const Icon(Icons.login, size: 16),
               label: const Text('Sign in'),

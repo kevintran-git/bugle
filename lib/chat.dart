@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:math';
 
-import 'package:bugle/palm_api.dart';
-import 'package:dart_openai/openai.dart';
+import 'package:bugle/api/palm_api.dart';
+import 'package:dart_openai/dart_openai.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:flutter/material.dart';
@@ -39,14 +39,29 @@ class _ChatWidgetState extends State<ChatWidget> {
         messages: _messages,
         onSendPressed: _handleSendPressed,
         user: _user,
+        //bubbleBuilder: _buildMessage,
         theme: DefaultChatTheme(
           inputBackgroundColor: themeColors.secondaryContainer,
-          inputTextColor: themeColors.onSurface,
+          inputTextColor: themeColors.onSecondaryContainer,
           primaryColor: themeColors.primary,
+          backgroundColor: themeColors.background,
         ),
       ),
     );
   }
+
+  // Widget _buildMessage(
+  //   Widget child, {
+  //   required message,
+  //   required nextMessageInGroup,
+  // }) {
+  //   return BubbleWidget(
+  //     child: child,
+  //     message: message as types.TextMessage,
+  //     nextMessageInGroup: nextMessageInGroup,
+  //     user: _user,
+  //   );
+  // }
 
   void _addMessage(types.TextMessage message) {
     setState(() {
@@ -63,7 +78,7 @@ class _ChatWidgetState extends State<ChatWidget> {
     );
 
     _addMessage(textMessage);
-    var chatbotResponse = await sendToGPT(message.text);
+    var chatbotResponse = await sendToPaLM(message.text);
 
     _addMessage(types.TextMessage(
       author: _bot,
@@ -114,6 +129,7 @@ Make sure you always provide the day of the week, date, then times in the format
     PaLMPrompt samplePrompt = PaLMPrompt(
         context: "",
         //"You are a secretary robot that can help people schedule meetings. Your goal is to produce a list of times that work. Try not to ask for unnecessary information.",
+        //"You are a secretary robot that can help people schedule meetings. Your goal is to produce a list of times that work. Try not to ask for unnecessary information.",
         examples: {},
         messages: [...(_messages.reversed.map((e) => e.text).toList())],
         temperature: 0.25,
@@ -122,5 +138,59 @@ Make sure you always provide the day of the week, date, then times in the format
         candidateCount: 1);
 
     return await PaLM().generateMessage(samplePrompt);
+  }
+}
+
+class BubbleWidget extends StatefulWidget {
+  final Widget child;
+  final types.TextMessage message;
+  final bool nextMessageInGroup;
+  final types.User user;
+
+  const BubbleWidget({
+    Key? key,
+    required this.child,
+    required this.message,
+    required this.nextMessageInGroup,
+    required this.user,
+  }) : super(key: key);
+
+  @override
+  _BubbleWidgetState createState() => _BubbleWidgetState();
+}
+
+class _BubbleWidgetState extends State<BubbleWidget> {
+  bool _isChecked = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final isUserMessage = widget.message.author.id == widget.user.id;
+    final colorScheme = Theme.of(context).colorScheme;
+    final borderRadius = BorderRadius.circular(20);
+    final color = isUserMessage ? colorScheme.primary : colorScheme.secondary;
+
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: borderRadius,
+        color: color,
+      ),
+      margin: const EdgeInsets.all(4),
+      padding: const EdgeInsets.all(8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          widget.child,
+          // your existing child widget
+          Checkbox(
+            value: _isChecked,
+            onChanged: (bool? value) {
+              setState(() {
+                _isChecked = value!;
+              });
+            },
+          ),
+        ],
+      ),
+    );
   }
 }

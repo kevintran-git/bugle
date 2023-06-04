@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:faker/faker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'models/friend.dart';
+import 'friend.dart';
 
 Future<void> populateDatabaseWithFakeFriends(User currentUser) async {
   final faker = Faker();

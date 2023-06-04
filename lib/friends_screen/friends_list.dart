@@ -1,9 +1,9 @@
 // stateful widget
-import 'package:bugle/auth.dart';
+import 'package:bugle/firebase/auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'models/friend.dart';
+import '../models/friend.dart';
 
 class FriendsList extends StatelessWidget {
   const FriendsList({Key? key}) : super(key: key);
@@ -12,7 +12,7 @@ class FriendsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<User?>(
-      stream: Authentication().userChanges, // listen to auth changes
+      stream: AuthProvider().userChanges, // listen to auth changes
       builder: (context, authSnapshot) {
         if (authSnapshot.connectionState == ConnectionState.active) {
           if (authSnapshot.hasData) {

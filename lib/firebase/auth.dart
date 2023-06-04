@@ -1,18 +1,18 @@
 // auth.dart
-import 'package:bugle/mock_user.dart';
+import 'package:bugle/models/mock_user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-class Authentication {
+class AuthProvider {
   // Singleton
-  static final Authentication _instance =
-      Authentication._internal(); // creates singleton
-  factory Authentication() =>
+  static final AuthProvider _instance =
+      AuthProvider._internal(); // creates singleton
+  factory AuthProvider() =>
       _instance; // links every call to the constructor to the same instance
-  Authentication._internal(); // private constructor
+  AuthProvider._internal(); // private constructor
 
   static const _clientId = kIsWeb ? 
   String.fromEnvironment("FIREBASE_CLIENTID_WEB") : String.fromEnvironment("FIREBASE_CLIENTID_IOS");
