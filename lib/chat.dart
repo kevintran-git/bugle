@@ -79,7 +79,7 @@ class _ChatWidgetState extends State<ChatWidget> {
     );
 
     _addMessage(textMessage);
-    var chatbotResponse = await sendToPaLM(message.text);
+    var chatbotResponse = await sendToGPT(message.text);
 
     _addMessage(types.TextMessage(
       author: _bot,
@@ -113,9 +113,7 @@ class _ChatWidgetState extends State<ChatWidget> {
 - Monday, May 15, 12 pm - 12:30 pm
 - Tuesday, May 18, 2 pm - 2:40 pm
 
-'
-
-Make sure you always provide the day of the week, date, then times in the format above. Today, the boss has given you this query to schedule. They have this calendar for the next week. And, they prefer that you respect these constraints on their schedule. Output a list of possible times.""",
+'Make sure you always provide the day of the week, date, then times in the format above. Today, the boss has given you this query to schedule. They have this calendar for the next week. And, they prefer that you respect these constraints on their schedule. Output a list of possible times.""",
           role: OpenAIChatMessageRole.system,
         ),
         ...previousMessages,

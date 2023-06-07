@@ -12,7 +12,7 @@ class AuthWrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     // Listen to the user stream from the auth class
     return StreamBuilder<User?>(
-      stream: AuthProvider().userChanges,
+      stream: AuthManager().userChanges,
       builder: (context, snapshot) {
         // If the user is not null, pass it to the child widget
         if (snapshot.hasData && snapshot.data != null) {

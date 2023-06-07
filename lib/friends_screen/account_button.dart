@@ -9,7 +9,7 @@ class AccountButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<User?>(
-      stream: AuthProvider().userChanges,
+      stream: AuthManager().userChanges,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.active) {
           final user = snapshot.data;
@@ -17,7 +17,7 @@ class AccountButton extends StatelessWidget {
             // avatar of the user. if on click, display dialog
             return InkWell(
               onTap: () {
-                AuthProvider().showSignOutDialog(context);
+                AuthManager().showSignOutDialog(context);
               },
               child: CircleAvatar(
                 // placeholder if no photoURL
@@ -29,7 +29,7 @@ class AccountButton extends StatelessWidget {
           } else {
             return ElevatedButton.icon(
               onPressed: () async {
-                await AuthProvider().signInOrLinkWithGoogle();
+                await AuthManager().signInOrLinkWithGoogle();
               },
               icon: const Icon(Icons.login, size: 16),
               label: const Text('Sign in'),

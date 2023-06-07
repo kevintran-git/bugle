@@ -6,13 +6,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-class AuthProvider {
+class AuthManager {
   // Singleton
-  static final AuthProvider _instance =
-      AuthProvider._internal(); // creates singleton
-  factory AuthProvider() =>
+  static final AuthManager _instance =
+      AuthManager._internal(); // creates singleton
+  factory AuthManager() =>
       _instance; // links every call to the constructor to the same instance
-  AuthProvider._internal(); // private constructor
+  AuthManager._internal(); // private constructor
 
   static const _clientId = kIsWeb ? 
   String.fromEnvironment("FIREBASE_CLIENTID_WEB") : String.fromEnvironment("FIREBASE_CLIENTID_IOS");
