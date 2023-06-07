@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:bugle/api/palm_api.dart';
 import 'package:dart_openai/dart_openai.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:flutter/material.dart';
@@ -120,7 +121,11 @@ Make sure you always provide the day of the week, date, then times in the format
         ...previousMessages,
       ],
     );
-    print(chatCompletion.choices.first.message.content);
+
+    if (kDebugMode) {
+      print(chatCompletion.choices.first.message.content);
+    }
+    
     return chatCompletion.choices.first.message.content;
   }
 
@@ -156,7 +161,7 @@ class BubbleWidget extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _BubbleWidgetState createState() => _BubbleWidgetState();
+  State<BubbleWidget> createState() => _BubbleWidgetState();
 }
 
 class _BubbleWidgetState extends State<BubbleWidget> {
