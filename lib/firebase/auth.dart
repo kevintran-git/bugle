@@ -1,5 +1,5 @@
 // auth.dart
-import 'package:bugle/models/mock_user.dart';
+import 'package:bugle/models/data_models.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -14,8 +14,9 @@ class AuthManager {
       _instance; // links every call to the constructor to the same instance
   AuthManager._internal(); // private constructor
 
-  static const _clientId = kIsWeb ? 
-  String.fromEnvironment("FIREBASE_CLIENTID_WEB") : String.fromEnvironment("FIREBASE_CLIENTID_IOS");
+  static const _clientId = kIsWeb
+      ? String.fromEnvironment("FIREBASE_CLIENTID_WEB")
+      : String.fromEnvironment("FIREBASE_CLIENTID_IOS");
 
   // Firebase and Google Sign In objects
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -31,16 +32,14 @@ class AuthManager {
 
   // Public getters for the current user and auth state
   User? get _currentUser => _firebaseAuth.currentUser;
-  DocumentReference? get _currentUserRef =>
+  DocumentReference get _currentUserRef =>
       FirebaseFirestore.instance.collection('users').doc(_currentUser?.uid);
   Stream<User?> get userChanges => _firebaseAuth.userChanges();
 
   Future<UserCredential?> signInAnonymously() async {
     try {
       UserCredential userCredential = await _firebaseAuth.signInAnonymously();
-      if (kDebugMode) {
-        initializeUserData(_currentUser!, _currentUserRef!);
-      }
+      createNewUser();
       return userCredential;
     } catch (e) {
       if (kDebugMode) {
@@ -65,12 +64,29 @@ class AuthManager {
         idToken: googleAuth?.idToken,
       );
 
+      createNewUser();
+
       return credential;
     } catch (e) {
       if (kDebugMode) {
         print('Error authenticating with Google: $e');
       }
       return null;
+    }
+  }
+
+  Future<void> createNewUser() async {
+    var userDoc = await _currentUserRef.get();
+    if (!userDoc.exists) {
+      final newUser = UserDataModel(
+        friends: [],
+        requestsInbox: [],
+        requestsOutgoing: [],
+        availability: [],
+        displayName: _currentUser!.uid,
+        id: _currentUser!.uid,
+      );
+      await _currentUserRef.set(newUser.toMap());
     }
   }
 
@@ -111,7 +127,7 @@ class AuthManager {
           }
         });
       }
-      await _currentUserRef?.delete(); // delete user data
+      await _currentUserRef.delete(); // delete user data
       await _currentUser?.delete(); // delete user
     }
   }

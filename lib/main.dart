@@ -1,10 +1,6 @@
-import 'dart:async';
-
 import 'package:bugle/chat.dart';
-import 'package:bugle/friends_screen/friends_list.dart';
-import 'package:bugle/friends_screen/search_bar.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:bugle/firebase/auth_wrapper.dart';
+import 'package:bugle/friends_screen/friends_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'responsive_navigation_layout.dart';
@@ -36,7 +32,7 @@ class MyApp extends StatelessWidget {
         icon: Icon(Icons.chat_bubble_outline),
         selectedIcon: Icon(Icons.chat_bubble),
         title: 'Schedule',
-        screen: FloatingSearchBar(child: FriendsList()),
+        screen: AuthWrapper(child: FriendsScreen()),
       ),
       ResponsiveNavigationDestination(
         icon: Icon(Icons.people_outline),
