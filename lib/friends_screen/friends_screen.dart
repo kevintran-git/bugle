@@ -12,14 +12,14 @@ class FriendsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Scaffold(
       drawer: FriendsDrawer(),
-        body: SafeArea(child: 
-          CustomScrollView(
-            slivers: [
-              FriendsSearchBar(),
-              FriendsListSliver(),
-            ],
-          ),
+      body: SafeArea(
+        child: CustomScrollView(
+          slivers: [
+            FriendsSearchBar(),
+            FriendsListSliver(),
+          ],
         ),
+      ),
     );
   }
 }
@@ -77,7 +77,7 @@ class FriendsListSliver extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final database = Provider.of<FirestoreDatabase>(context);
-    
+
     return SliverToBoxAdapter(
       child: Column(
         children: [
@@ -173,6 +173,11 @@ class FriendsListSliver extends StatelessWidget {
                       // A title widget that shows the display name of the friend user
                       title: Text(friendUser.displayName),
                       // A subtitle widget that shows the availability of the friend user
+                      onTap: () {
+                        // Navigate to the chat screen
+                        Navigator.pushNamed(context, '/friendchat',
+                            arguments: friendUser);
+                      },
                     );
                   },
                 );
@@ -187,4 +192,3 @@ class FriendsListSliver extends StatelessWidget {
     );
   }
 }
-
