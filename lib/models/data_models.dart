@@ -17,7 +17,8 @@ class UserDataModel {
   final List<String> friends;
   final List<String> requestsInbox;
   final List<String> requestsOutgoing;
-  final List<CalendarEvents> availability;
+  final String availability;
+  //final List<CalendarEvents> availability;
 
   Map<String, dynamic> toMap() {
     return {
@@ -28,7 +29,8 @@ class UserDataModel {
       'friends': friends,
       'requestsInbox': requestsInbox,
       'requestsOutgoing': requestsOutgoing,
-      'availability': availability.map((event) => event.toMap()).toList(),
+      'availability': availability,
+      //'availability': availability.map((event) => event.toMap()).toList(),
     };
   }
 
@@ -41,43 +43,44 @@ class UserDataModel {
       friends: List<String>.from(map['friends']),
       requestsInbox: List<String>.from(map['requestsInbox']),
       requestsOutgoing: List<String>.from(map['requestsOutgoing']),
-      availability: List<CalendarEvents>.from(
-        map['availability'].map(
-              (event) => CalendarEvents.fromMap(event),
-        ),
-      ),
+      availability: map['availability'],
+      // availability: List<CalendarEvents>.from(
+      //   map['availability'].map(
+      //         (event) => CalendarEvents.fromMap(event),
+      //   ),
+      // ),
     );
   }
 }
 
-class CalendarEvents {
-  CalendarEvents({
-    required this.startTime,
-    required this.endTime,
-    required this.title,
-    required this.description,
-  });
+// class CalendarEvents {
+//   CalendarEvents({
+//     required this.startTime,
+//     required this.endTime,
+//     required this.title,
+//     required this.description,
+//   });
 
-  final DateTime startTime;
-  final DateTime endTime;
-  final String title;
-  final String description;
+//   final DateTime startTime;
+//   final DateTime endTime;
+//   final String title;
+//   final String description;
 
-  Map<String, dynamic> toMap() {
-    return {
-      'startTime': startTime,
-      'endTime': endTime,
-      'title': title,
-      'description': description,
-    };
-  }
+//   Map<String, dynamic> toMap() {
+//     return {
+//       'startTime': startTime,
+//       'endTime': endTime,
+//       'title': title,
+//       'description': description,
+//     };
+//   }
 
-  factory CalendarEvents.fromMap(Map<String, dynamic> map) {
-    return CalendarEvents(
-      startTime: map['startTime'].toDate(),
-      endTime: map['endTime'].toDate(),
-      title: map['title'],
-      description: map['description'],
-    );
-  }
-}
+//   factory CalendarEvents.fromMap(Map<String, dynamic> map) {
+//     return CalendarEvents(
+//       startTime: map['startTime'].toDate(),
+//       endTime: map['endTime'].toDate(),
+//       title: map['title'],
+//       description: map['description'],
+//     );
+//   }
+// }

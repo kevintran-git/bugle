@@ -1,10 +1,13 @@
 // auth.dart
+import 'package:bugle/firebase/calendar_fetcher.dart';
 import 'package:bugle/models/data_models.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:googleapis/calendar/v3.dart';
+
 
 class AuthManager {
   // Singleton
@@ -25,7 +28,7 @@ class AuthManager {
     // GoogleSignIn object, this is used for the Google Sign In flow and Calendar access
     scopes: [
       'email',
-      'https://www.googleapis.com/auth/calendar.events.readonly',
+      CalendarApi.calendarReadonlyScope,
     ],
     clientId: _clientId,
   );
@@ -83,7 +86,7 @@ class AuthManager {
         friends: [],
         requestsInbox: [],
         requestsOutgoing: [],
-        availability: [],
+        availability: "",
         displayName: currentUser.uid,
         id: currentUser.uid,
       );
@@ -120,6 +123,7 @@ class AuthManager {
     );
 
     _currentUserRef.update(newUser.toMap());
+    CalendarFetcher().updateUserData(_currentUserRef);
   }
 
   Future<void> signInOrLinkWithGoogle() async {
