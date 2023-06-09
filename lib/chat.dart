@@ -272,7 +272,7 @@ class _ChatFriendWidgetState extends State<ChatFriendWidget> {
     );
 
     _addMessage(textMessage);
-    var chatbotResponse = await sendToGPT(message.text);
+    var chatbotResponse = await sendToGPT();
 
     _addMessage(types.TextMessage(
       author: _bot,
@@ -282,7 +282,7 @@ class _ChatFriendWidgetState extends State<ChatFriendWidget> {
     ));
   }
 
-  Future<String> sendToGPT(String message) async {
+  Future<String> sendToGPT() async {
     // create a queue of chat choices and add the last 15 messages in _messages into it. if there were less than 15 messages, add all of them.
     List<OpenAIChatCompletionChoiceMessageModel> previousMessages = [];
     for (int i = min(15, _messages.length - 1); i >= 0; i--) {
@@ -293,6 +293,10 @@ class _ChatFriendWidgetState extends State<ChatFriendWidget> {
             : OpenAIChatMessageRole.assistant,
       ));
     }
+
+    const mySchedule = "";
+    const friendSchedule = "";
+
     OpenAIChatCompletionModel chatCompletion =
         await OpenAI.instance.chat.create(
       model: "gpt-3.5-turbo",
@@ -306,7 +310,11 @@ class _ChatFriendWidgetState extends State<ChatFriendWidget> {
 - Monday, May 15, 12 pm - 12:30 pm
 - Tuesday, May 18, 2 pm - 2:40 pm
 
-'Make sure you always provide the day of the week, date, then times in the format above. Today, the boss has given you this query to schedule. They have this calendar for the next week. And, they prefer that you respect these constraints on their schedule. Output a list of possible times.""",
+'Make sure you always provide the day of the week, date, then times in the format above. Today, the boss has given you this query to schedule. They have this calendar for the next week: $mySchedule.
+
+Here is their friend's calendar for the next week: $friendSchedule.
+
+Output a list of possible times. Here's their request for the event below.""",
           role: OpenAIChatMessageRole.system,
         ),
         ...previousMessages,
