@@ -28,6 +28,12 @@ class FirestoreDatabase {
     final targetUser = await _getUser(targetUserId);
     final currentUser = await _getUser();
 
+    // check if there is already a pending friend request or if the target user is the current user
+    if (targetUser.requestsInbox.contains(uid) ||
+        currentUser.requestsOutgoing.contains(targetUserId) || targetUserId == uid) {
+      return;
+    }
+
     // add the target user to the current user's sent friend requests
     currentUser.requestsOutgoing.add(targetUserId);
     await updateUser(currentUser);
