@@ -77,14 +77,15 @@ class AuthManager {
 
   Future<void> createNewUser() async {
     var userDoc = await _currentUserRef.get();
-    if (!userDoc.exists) {
+    var currentUser = _currentUser;
+    if (!userDoc.exists && currentUser != null) {
       final newUser = UserDataModel(
         friends: [],
         requestsInbox: [],
         requestsOutgoing: [],
         availability: [],
-        displayName: _currentUser!.uid,
-        id: _currentUser!.uid,
+        displayName: currentUser.uid,
+        id: currentUser.uid,
       );
       await _currentUserRef.set(newUser.toMap());
     }
@@ -97,7 +98,7 @@ class AuthManager {
     final userDoc = await _currentUserRef.get();
     final currentUser =
         UserDataModel.fromMap(userDoc.data() as Map<String, dynamic>);
-    
+
     // if currentUser is null, return
     if (_currentUser == null) return;
 
@@ -112,9 +113,9 @@ class AuthManager {
       email: email ?? currentUser.email,
       profilePictureUrl: profilePictureUrl ?? currentUser.profilePictureUrl,
       availability: currentUser.availability,
-      id: currentUser.id, 
-      friends: currentUser.friends, 
-      requestsInbox: currentUser.requestsInbox, 
+      id: currentUser.id,
+      friends: currentUser.friends,
+      requestsInbox: currentUser.requestsInbox,
       requestsOutgoing: currentUser.requestsOutgoing,
     );
 

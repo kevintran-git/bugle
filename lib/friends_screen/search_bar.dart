@@ -26,18 +26,7 @@ class FriendsSearchBar extends StatelessWidget {
           return _buildSuggestions(context, controller, database);
         },
       ),
-    );
-    // return SearchAnchor.bar(
-    //   barHintText: 'Search for a friend',
-    //   barLeading: _buildLeading(context),
-    //   barTrailing: const [
-    //     AccountButton(),
-    //   ],
-    //   suggestionsBuilder: (BuildContext context, SearchController controller) {
-    //     return _buildSuggestions(context, controller, database);
-    //   },
-    // );
-  
+    );  
   }
 
   // Widget _buildLeading(BuildContext context) {
@@ -150,8 +139,12 @@ class UserTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      leading: const Icon(Icons.person), // Show a generic icon for email search
+    return ListTile( // user icon if they have one or const Icon(Icons.person) if they don't
+      leading: user.profilePictureUrl != null
+          ? CircleAvatar(
+              backgroundImage: NetworkImage(user.profilePictureUrl ?? ""),
+            )
+          : const Icon(Icons.person),
       title: Text(isEmailSearch
           ? (user.email ??
               user.displayName) // Show email or username depending on the search type

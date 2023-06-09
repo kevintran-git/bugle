@@ -26,14 +26,26 @@ class AuthWrapper extends StatelessWidget {
           );
         } else {
           // User is not logged in
-          // Show a button that when pressed calls AuthManager().signInOrLinkWithGoogle()
+          // Show two buttons: Sign in with Google and Sign in Anonymously
+          // When the user taps either button, call the corresponding method in AuthManager
           return Scaffold(
             body: Center(
-              child: ElevatedButton(
-                onPressed: () async {
-                  await AuthManager().signInAnonymously();
-                },
-                child: const Text('Get Started'),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      AuthManager().signInOrLinkWithGoogle();
+                    },
+                    child: const Text('Sign in with Google'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      AuthManager().signInAnonymously();
+                    },
+                    child: const Text('Sign in Anonymously'),
+                  ),
+                ],
               ),
             ),
           );
