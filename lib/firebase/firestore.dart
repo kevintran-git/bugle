@@ -4,12 +4,19 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class FirestoreDatabase {
   final String uid;
   FirestoreDatabase({required this.uid});
-
   final userCollection = FirebaseFirestore.instance.collection('users');
-
+ 
   // updates a user's data, if the userId is not provided, it will update the current user's data
   Future<void> updateUser(UserDataModel user, [String? userId]) async {
     await userCollection.doc(userId ?? uid).update(user.toMap());
+  }
+
+  // Notifies when the user's data changes
+  Stream<UserDataModel> userStream([String? userId]) {
+    return userCollection
+        .doc(userId ?? uid)
+        .snapshots()
+        .map((user) => UserDataModel.fromMap(user.data()!));
   }
 
   // Gets a user from the database
@@ -80,25 +87,18 @@ class FirestoreDatabase {
     return Future.wait(userIds.map((userId) => _getUser(userId)));
   }
 
-  // Gets a list of the user's friends from the database
-  Future<List<UserDataModel>> getFriends() async {
-    final currentUser = await _getUser();
-    final friends = await _getUsersByIds(currentUser.friends);
-    return friends;
+  // stream of the user's friends
+  Stream<List<UserDataModel>> friendsStream() {
+    return userStream().map((user) => user.friends).asyncMap(_getUsersByIds);
   }
 
-  // Gets a list of the user's sent friend requests from the database
-  Future<List<UserDataModel>> getRequestsOutgoing() async {
-    final currentUser = await _getUser();
-    final requestsOutgoing = await _getUsersByIds(currentUser.requestsOutgoing);
-    return requestsOutgoing;
+  // stream of the user's friend requests
+  Stream<List<UserDataModel>> requestsInboxStream() {
+    return userStream().map((user) => user.requestsInbox).asyncMap(_getUsersByIds);
   }
 
-  // Gets a list of the user's received friend requests from the database
-  Future<List<UserDataModel>> getRequestsInbox() async {
-    final currentUser = await _getUser();
-    final requestsInbox = await _getUsersByIds(currentUser.requestsInbox);
-    return requestsInbox;
+  Stream<List<UserDataModel>> requestsOutgoingStream() {
+    return userStream().map((user) => user.requestsOutgoing).asyncMap(_getUsersByIds);
   }
 
   // Searches for users by field that are not already friends with the current user. Returns a list of users that begin with the search query
@@ -127,3 +127,15 @@ class FirestoreDatabase {
     return searchUsersByField('email', query);
   }
 }
+
+// Friend Data Model:
+// {
+// String id;
+// String displayName;
+// String email;
+// String photoUrl;
+// List<String> friends;
+// List<String> requestsOutgoing;
+// List<String> requestsInbox;
+// List<CalendarEvents> availability;
+// }

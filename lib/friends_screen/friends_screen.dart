@@ -91,7 +91,7 @@ class FriendsListSliver extends StatelessWidget {
           ),
           // A stream builder that listens to the requests inbox stream from the friends method
           StreamBuilder<List<UserDataModel>>(
-            stream: database.getRequestsInbox().asStream(),
+            stream: database.requestsInboxStream(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 // A list view builder that creates a tile for each request in the inbox
@@ -153,7 +153,7 @@ class FriendsListSliver extends StatelessWidget {
           ),
           // A stream builder that listens to the friends stream from the friends method
           StreamBuilder<List<UserDataModel>>(
-            stream: database.getFriends().asStream(),
+            stream: database.friendsStream(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 // A list view builder that creates a tile for each friend in the list
