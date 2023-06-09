@@ -20,7 +20,7 @@ class FirestoreDatabase {
   }
 
   // Gets a user from the database
-  Future<UserDataModel> _getUser([String? userId]) async {
+  Future<UserDataModel> getUser([String? userId]) async {
     final userDoc = await userCollection.doc(userId ?? uid).get();
     final userData = userDoc.data();
     if (userData != null) {
@@ -32,8 +32,8 @@ class FirestoreDatabase {
 
   // Sends a friend request from the current user to the target user
   Future<void> sendFriendRequest(String targetUserId) async {
-    final targetUser = await _getUser(targetUserId);
-    final currentUser = await _getUser();
+    final targetUser = await getUser(targetUserId);
+    final currentUser = await getUser();
 
     // check if there is already a pending friend request or if the target user is the current user
     if (targetUser.requestsInbox.contains(uid) ||
@@ -52,8 +52,8 @@ class FirestoreDatabase {
 
   // Handles a friend request from the target user to the current user
   Future<void> handleFriendRequest(String targetUserId, bool accepted) async {
-    final targetUser = await _getUser(targetUserId);
-    final currentUser = await _getUser();
+    final targetUser = await getUser(targetUserId);
+    final currentUser = await getUser();
 
     // check if the target user has sent a friend request to the current user
     if (!targetUser.requestsOutgoing.contains(uid) ||
@@ -84,7 +84,7 @@ class FirestoreDatabase {
 
   // Gets a list of users by their ids
   Future<List<UserDataModel>> _getUsersByIds(List<String> userIds) async {
-    return Future.wait(userIds.map((userId) => _getUser(userId)));
+    return Future.wait(userIds.map((userId) => getUser(userId)));
   }
 
   // stream of the user's friends
@@ -104,7 +104,7 @@ class FirestoreDatabase {
   // Searches for users by field that are not already friends with the current user. Returns a list of users that begin with the search query
   Future<List<UserDataModel>> searchUsersByField(
       String field, String query) async {
-    final currentUser = await _getUser();
+    final currentUser = await getUser();
     final users = await userCollection
         .where(field, isGreaterThanOrEqualTo: query)
         .where(field, isLessThan: '${query}z')

@@ -2,12 +2,14 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:bugle/api/palm_api.dart';
+import 'package:bugle/firebase/firestore.dart';
 import 'package:bugle/models/data_models.dart';
 import 'package:dart_openai/dart_openai.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 // class ChatWidget extends StatefulWidget {
 //   const ChatWidget({Key? key}) : super(key: key);
@@ -222,6 +224,9 @@ class _ChatFriendWidgetState extends State<ChatFriendWidget> {
   final _user = const types.User(id: '82091008-a484-4a89-ae75-a22bf8d6f3ac');
   final _bot = const types.User(id: 'f6d7f1c0-3b9b-4b4f-8f0a-0e4f9aefbbd8');
 
+  var mySchedule = "";
+  var friendsSchedule = "";
+
   @override
   Widget build(BuildContext context) {
     final friend = ModalRoute.of(context)!.settings.arguments as UserDataModel?;
@@ -230,6 +235,9 @@ class _ChatFriendWidgetState extends State<ChatFriendWidget> {
       return Container(); // Return empty widget.
     }
     final ColorScheme themeColors = Theme.of(context).colorScheme;
+
+    final database = Provider.of<FirestoreDatabase>(context, listen: false);
+    fetchSchedules(database, friend);
 
     return Scaffold(
       appBar: AppBar(
@@ -255,6 +263,13 @@ class _ChatFriendWidgetState extends State<ChatFriendWidget> {
         ),
       ),
     );
+  }
+
+  void fetchSchedules(
+      FirestoreDatabase database, UserDataModel myFriend) async {
+    var myUser = await database.getUser();
+    mySchedule = myUser.availability;
+    friendsSchedule = myFriend.availability;
   }
 
   void _addMessage(types.TextMessage message) {
@@ -294,14 +309,14 @@ class _ChatFriendWidgetState extends State<ChatFriendWidget> {
       ));
     }
 
-    const mySchedule = "";
-    const friendSchedule = "";
+    print("My schedule: $mySchedule");
+    print("Friend's schedule: $friendsSchedule");
 
     OpenAIChatCompletionModel chatCompletion =
         await OpenAI.instance.chat.create(
       model: "gpt-3.5-turbo",
       messages: [
-        const OpenAIChatCompletionChoiceMessageModel(
+        OpenAIChatCompletionChoiceMessageModel(
           content:
               """You are an executive assistant helping your boss schedule an event. Your goal is to produce a list of times that work. Output the options in markdown. Your boss has limitations on their schedule, including existing calendar events and busy preferences. When you schedule, make sure you are cognizant of their limited availabilities — so schedule thoughtfully! Thankfully, you are a world class executive assistant, so you are sure to schedule smartly. Here’s an example of the output you might generate:
 
@@ -312,7 +327,7 @@ class _ChatFriendWidgetState extends State<ChatFriendWidget> {
 
 'Make sure you always provide the day of the week, date, then times in the format above. Today, the boss has given you this query to schedule. They have this calendar for the next week: $mySchedule.
 
-Here is their friend's calendar for the next week: $friendSchedule.
+Here is their friend's calendar for the next week: $friendsSchedule.
 
 Output a list of possible times. Here's their request for the event below.""",
           role: OpenAIChatMessageRole.system,
