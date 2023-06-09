@@ -84,7 +84,7 @@ class _ChatWidgetState extends State<ChatWidget> {
     _addMessage(types.TextMessage(
       author: _bot,
       createdAt: DateTime.now().millisecondsSinceEpoch,
-      id: randomString(), // TODO: Replace with UID
+      id: randomString(), 
       text: chatbotResponse,
     ));
   }

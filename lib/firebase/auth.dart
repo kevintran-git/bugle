@@ -90,6 +90,37 @@ class AuthManager {
     }
   }
 
+  // Updates the user data with the given user object
+  Future<void> _updateUserInfo() async {
+    // Update the user info with the credential user
+    // gets the current user data
+    final userDoc = await _currentUserRef.get();
+    final currentUser =
+        UserDataModel.fromMap(userDoc.data() as Map<String, dynamic>);
+    
+    // if currentUser is null, return
+    if (_currentUser == null) return;
+
+    // potentially gets new user data
+    final displayName = _currentUser!.providerData[0].displayName;
+    final email = _currentUser!.providerData[0].email;
+    final profilePictureUrl = _currentUser!.providerData[0].photoURL;
+
+    // creates a new user object with the new data
+    final newUser = UserDataModel(
+      displayName: displayName ?? currentUser.displayName,
+      email: email ?? currentUser.email,
+      profilePictureUrl: profilePictureUrl ?? currentUser.profilePictureUrl,
+      availability: currentUser.availability,
+      id: currentUser.id, 
+      friends: currentUser.friends, 
+      requestsInbox: currentUser.requestsInbox, 
+      requestsOutgoing: currentUser.requestsOutgoing,
+    );
+
+    _currentUserRef.update(newUser.toMap());
+  }
+
   Future<void> signInOrLinkWithGoogle() async {
     final OAuthCredential? credential = await authenticateWithGoogle();
 
@@ -105,10 +136,12 @@ class AuthManager {
         // Otherwise, sign in with Google credential
         await _firebaseAuth.signInWithCredential(credential);
       }
+      await _updateUserInfo();
     } on FirebaseAuthException catch (e) {
       await deleteUser();
       // Sign in with Google credential
       await _firebaseAuth.signInWithCredential(credential!);
+      await _updateUserInfo();
       if (kDebugMode) {
         print(e);
       }
@@ -118,15 +151,12 @@ class AuthManager {
   Future<void> deleteUser() async {
     // delete if the user is anonymous
     if (_currentUser?.isAnonymous ?? false) {
-      var friends = _currentUserRef?.collection('friends');
-      if (friends != null) {
-        // delete all friends
-        await friends.get().then((snapshot) {
-          for (DocumentSnapshot ds in snapshot.docs) {
-            ds.reference.delete();
-          }
-        });
-      }
+      // var friends = _currentUserRef.collection('friends');
+      // await friends.get().then((snapshot) {
+      //   for (DocumentSnapshot ds in snapshot.docs) {
+      //     ds.reference.delete();
+      //   }
+      // });
       await _currentUserRef.delete(); // delete user data
       await _currentUser?.delete(); // delete user
     }

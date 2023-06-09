@@ -40,20 +40,20 @@ class FriendsSearchBar extends StatelessWidget {
   
   }
 
-  Widget _buildLeading(BuildContext context) {
-    return Builder(
-      // this builder is needed to provide a context for the IconButton below
-      builder: (context) {
-        return IconButton(
-          icon: const Icon(Icons.menu),
-          onPressed: () {
-            // Open the drawer
-            Scaffold.of(context).openDrawer(); // opens the side drawer
-          },
-        );
-      },
-    );
-  }
+  // Widget _buildLeading(BuildContext context) {
+  //   return Builder(
+  //     // this builder is needed to provide a context for the IconButton below
+  //     builder: (context) {
+  //       return IconButton(
+  //         icon: const Icon(Icons.menu),
+  //         onPressed: () {
+  //           // Open the drawer
+  //           Scaffold.of(context).openDrawer(); // opens the side drawer
+  //         },
+  //       );
+  //     },
+  //   );
+  // }
 
   // method for generating a list of suggestions
   Iterable<Widget> _buildSuggestions(BuildContext context,
