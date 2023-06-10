@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const AuthWrapper(child: FriendsScreen()),
         //'/chat': (context) => const ChatWidget(),
-        '/friendchat': (context) => const ChatFriendWidget(),
+        '/friendchat': (context) => const AuthWrapper(child: ChatFriendWidget()),
       },
       debugShowCheckedModeBanner: false, // Remove debug banner
       theme: ThemeData(
