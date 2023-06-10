@@ -74,6 +74,26 @@ class FriendsDrawer extends StatelessWidget {
 class FriendsListSliver extends StatelessWidget {
   const FriendsListSliver({Key? key}) : super(key: key);
 
+  Widget friendsListTile(UserDataModel friend, BuildContext context) {
+    final status = friend.email == null ? 'Anonymous' : "@${friend.email?.substring(0, friend.email?.indexOf('@'))}";
+    return ListTile(
+      leading: CircleAvatar(backgroundImage: NetworkImage(friend.profilePictureUrl ?? ''),),
+      title: Text(friend.displayName,
+          style: const TextStyle(fontWeight: FontWeight.w400)),
+      // thinner text. truncate to fit on one line
+      subtitle: Text(
+        status,
+        style: const TextStyle(fontWeight: FontWeight.w300),
+        overflow: TextOverflow.ellipsis,
+      ),
+      // onclick
+      onTap: () {
+        Navigator.pushNamed(context, '/friendchat',
+            arguments: friend);
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final database = Provider.of<FirestoreDatabase>(context);
@@ -82,13 +102,13 @@ class FriendsListSliver extends StatelessWidget {
       child: Column(
         children: [
           // A header for the friend requests section
-          const Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Text(
-              'Friend Requests',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-          ),
+          // const Padding(
+          //   padding: EdgeInsets.all(8.0),
+          //   child: Text(
+          //     'Friend Requests',
+          //     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          //   ),
+          // ),
           // A stream builder that listens to the requests inbox stream from the friends method
           StreamBuilder<List<UserDataModel>>(
             stream: database.requestsInboxStream(),
@@ -110,6 +130,8 @@ class FriendsListSliver extends StatelessWidget {
                       ),
                       // A title widget that shows the display name of the request user
                       title: Text(requestUser.displayName),
+                      // A subtitle widget that shows the email of the request user
+                      subtitle: Text(requestUser.email == null ? 'Anonymous' : "@${requestUser.email?.substring(0, requestUser.email?.indexOf('@'))}"),
                       // A trailing widget that shows two buttons for accepting and declining the request
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -143,14 +165,14 @@ class FriendsListSliver extends StatelessWidget {
           ),
           // A divider to separate the friend requests and the friends sections
           const Divider(),
-          // A header for the friends section
-          const Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Text(
-              'Friends',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-          ),
+          // // A header for the friends section
+          // const Padding(
+          //   padding: EdgeInsets.all(8.0),
+          //   child: Text(
+          //     'Friends',
+          //     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          //   ),
+          // ),
           // A stream builder that listens to the friends stream from the friends method
           StreamBuilder<List<UserDataModel>>(
             stream: database.friendsStream(),
@@ -164,21 +186,7 @@ class FriendsListSliver extends StatelessWidget {
                   itemBuilder: (context, index) {
                     // A variable to store the current friend user data
                     final friendUser = snapshot.data![index];
-                    return ListTile(
-                      // A leading widget that shows the profile picture of the friend user
-                      leading: CircleAvatar(
-                        backgroundImage:
-                            NetworkImage(friendUser.profilePictureUrl ?? ''),
-                      ),
-                      // A title widget that shows the display name of the friend user
-                      title: Text(friendUser.displayName),
-                      // A subtitle widget that shows the availability of the friend user
-                      onTap: () {
-                        // Navigate to the chat screen
-                        Navigator.pushNamed(context, '/friendchat',
-                            arguments: friendUser);
-                      },
-                    );
+                    return friendsListTile(friendUser, context);
                   },
                 );
               } else {
@@ -192,3 +200,19 @@ class FriendsListSliver extends StatelessWidget {
     );
   }
 }
+
+// ListTile(
+// // A leading widget that shows the profile picture of the friend user
+// leading: CircleAvatar(
+// backgroundImage:
+// NetworkImage(friendUser.profilePictureUrl ?? ''),
+// ),
+// // A title widget that shows the display name of the friend user
+// title: Text(friendUser.displayName),
+// // A subtitle widget that shows the availability of the friend user
+// onTap: () {
+// // Navigate to the chat screen
+// Navigator.pushNamed(context, '/friendchat',
+// arguments: friendUser);
+// },
+// );

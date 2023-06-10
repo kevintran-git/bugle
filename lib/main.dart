@@ -1,6 +1,7 @@
 import 'package:bugle/chat.dart';
 import 'package:bugle/firebase/auth_wrapper.dart';
 import 'package:bugle/friends_screen/friends_screen.dart';
+import 'package:bugle/responsive_navigation_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase/firebase_options.dart';
@@ -21,13 +22,35 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
-    const seedColor = Colors.blue;
+    const seedColor = Colors.deepPurple;
+
+    const List<ResponsiveNavigationDestination> destinations =
+        <ResponsiveNavigationDestination>[
+      ResponsiveNavigationDestination(
+        icon: Icon(Icons.chat_bubble_outline),
+        selectedIcon: Icon(Icons.chat_bubble),
+        title: 'Schedule',
+        screen: AuthWrapper(child: FriendsScreen()),
+      ),
+      ResponsiveNavigationDestination(
+        icon: Icon(Icons.people_outline),
+        selectedIcon: Icon(Icons.people),
+        title: 'Groups',
+        screen: Placeholder(),
+      ),
+      ResponsiveNavigationDestination(
+        icon: Icon(Icons.calendar_month_rounded),
+        selectedIcon: Icon(Icons.calendar_month),
+        title: 'Availability',
+        screen: Placeholder(),
+      ),
+    ];
 
     return MaterialApp(
       title: 'Bugle',
       initialRoute: '/',
       routes: {
-        '/': (context) => const AuthWrapper(child: FriendsScreen()),
+        '/': (context) => ResponsiveNavigationLayout(selectedIndex: 0, destinations: destinations, onItemSelected: (_) {},),
         //'/chat': (context) => const ChatWidget(),
         '/friendchat': (context) => const AuthWrapper(child: ChatFriendWidget()),
       },
@@ -51,27 +74,7 @@ class MyApp extends StatelessWidget {
     );
     // Define the navigation items for the responsive navigation layout.
     // Each item contains an icon, a selected icon, a title, and a screen to navigate to.
-    // const List<ResponsiveNavigationDestination> destinations =
-    //     <ResponsiveNavigationDestination>[
-    //   ResponsiveNavigationDestination(
-    //     icon: Icon(Icons.chat_bubble_outline),
-    //     selectedIcon: Icon(Icons.chat_bubble),
-    //     title: 'Schedule',
-    //     screen: AuthWrapper(child: FriendsScreen()),
-    //   ),
-    //   ResponsiveNavigationDestination(
-    //     icon: Icon(Icons.people_outline),
-    //     selectedIcon: Icon(Icons.people),
-    //     title: 'Groups',
-    //     screen: Placeholder(),
-    //   ),
-    //   ResponsiveNavigationDestination(
-    //     icon: Icon(Icons.calendar_month_rounded),
-    //     selectedIcon: Icon(Icons.calendar_month),
-    //     title: 'Availability',
-    //     screen: ChatWidget(),
-    //   ),
-    // ];
+
 
 // This code creates a Material 3 theme and a bottom navigation bar.
 // It also creates a ChangeNotifierProvider and a Consumer for app state.
