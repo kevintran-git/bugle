@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 
 /// Flutter code sample for pinned [SearchAnchor] while scrolling.
