@@ -5,7 +5,7 @@ class FirestoreDatabase {
   final String uid;
   FirestoreDatabase({required this.uid});
   final userCollection = FirebaseFirestore.instance.collection('users');
- 
+
   // updates a user's data, if the userId is not provided, it will update the current user's data
   Future<void> updateUser(UserDataModel user, [String? userId]) async {
     await userCollection.doc(userId ?? uid).update(user.toMap());

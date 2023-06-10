@@ -26,7 +26,7 @@ class FriendsSearchBar extends StatelessWidget {
           return _buildSuggestions(context, controller, database);
         },
       ),
-    );  
+    );
   }
 
   // Widget _buildLeading(BuildContext context) {
@@ -110,7 +110,7 @@ class FriendsSearchBar extends StatelessWidget {
     // Check if the query contains an @ symbol
     //bool isEmailSearch = query.contains('@');
 
- 
+
 
     // // Declare a future to store the async operation of searching users
     // Future<List<UserDataModel>> future;
