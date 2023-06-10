@@ -43,7 +43,7 @@ class AuthWrapper extends StatelessWidget {
                     onPressed: () {
                       AuthManager().signInAnonymously();
                     },
-                    child: const Text('Sign in Anonymously'),
+                    child: const Text('Sign in Anonymously (not preferred)'),
                   ),
                 ],
               ),
