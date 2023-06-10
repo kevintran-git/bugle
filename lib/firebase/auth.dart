@@ -98,13 +98,18 @@ class AuthManager {
   Future<void> _updateUserInfo() async {
     // Update the user info with the credential user
     // gets the current user data
-    final userDoc = await _currentUserRef.get();
+    var userDoc = await _currentUserRef.get();
+    // if userdoc is null create a new user
+    if (!userDoc.exists) {
+      await createNewUser();
+      userDoc = await _currentUserRef.get();
+    }
+
     final currentUser =
         UserDataModel.fromMap(userDoc.data() as Map<String, dynamic>);
 
     // if currentUser is null, return
     if (_currentUser == null) return;
-
     // potentially gets new user data
     final displayName = _currentUser!.providerData[0].displayName;
     final email = _currentUser!.providerData[0].email;
