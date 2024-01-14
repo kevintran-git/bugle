@@ -14,7 +14,6 @@ class CalendarFetcher {
   void updateUserData(DocumentReference<Object?> userRef) async {
     var events = await fetchCalendars();
     if (events == null) return;
-    print(events);
     userRef.update({'availability': events});
   }
 

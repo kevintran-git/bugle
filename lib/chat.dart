@@ -140,7 +140,10 @@ class _ChatFriendWidgetState extends State<ChatFriendWidget> {
     List<OpenAIChatCompletionChoiceMessageModel> previousMessages = [];
     for (int i = min(15, _messages.length - 1); i >= 0; i--) {
       previousMessages.add(OpenAIChatCompletionChoiceMessageModel(
-        content: _messages[i].text,
+        content: [
+          OpenAIChatCompletionChoiceMessageContentItemModel.text(
+              _messages[i].text)
+        ],
         role: _messages[i].author.id == _user.id
             ? OpenAIChatMessageRole.user
             : OpenAIChatMessageRole.assistant,
@@ -162,26 +165,21 @@ Here is their friend's calendar for the next week: $friendsSchedule.
 
 Output a list of possible times. Here's their request for the event below.""";
 
-    print(systemPrompt);
-    print(previousMessages.map((e) => e.content).toList());
-
     OpenAIChatCompletionModel chatCompletion =
         await OpenAI.instance.chat.create(
       model: "gpt-3.5-turbo",
       messages: [
         OpenAIChatCompletionChoiceMessageModel(
-          content: systemPrompt,
+          content: [
+            OpenAIChatCompletionChoiceMessageContentItemModel.text(systemPrompt)
+          ],
           role: OpenAIChatMessageRole.system,
         ),
         ...previousMessages,
       ],
     );
 
-    if (kDebugMode) {
-      print(chatCompletion.choices.first.message.content);
-    }
-
-    return chatCompletion.choices.first.message.content;
+    return chatCompletion.choices.first.message.content?[0].text ?? "";
   }
 
   Future<String> sendToPaLM(String message) async {
