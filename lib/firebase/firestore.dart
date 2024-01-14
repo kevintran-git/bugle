@@ -58,6 +58,11 @@ class FirestoreDatabase {
     // check if the target user has sent a friend request to the current user
     if (!targetUser.requestsOutgoing.contains(uid) ||
         !currentUser.requestsInbox.contains(targetUserId)) {
+          // remove friend requests
+      currentUser.requestsInbox.remove(targetUserId);
+      targetUser.requestsOutgoing.remove(uid);
+      await updateUser(currentUser);
+      await updateUser(targetUser, targetUserId);
       throw Exception('No friend request found');
     }
 
