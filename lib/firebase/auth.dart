@@ -1,10 +1,13 @@
 // auth.dart
-import 'package:bugle/models/mock_user.dart';
+import 'package:bugle/firebase/calendar_fetcher.dart';
+import 'package:bugle/models/data_models.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:googleapis/calendar/v3.dart';
+
 
 class AuthManager {
   // Singleton
@@ -14,8 +17,9 @@ class AuthManager {
       _instance; // links every call to the constructor to the same instance
   AuthManager._internal(); // private constructor
 
-  static const _clientId = kIsWeb ? 
-  String.fromEnvironment("FIREBASE_CLIENTID_WEB") : String.fromEnvironment("FIREBASE_CLIENTID_IOS");
+  static const _clientId = kIsWeb
+      ? String.fromEnvironment("FIREBASE_CLIENTID_WEB")
+      : String.fromEnvironment("FIREBASE_CLIENTID_IOS");
 
   // Firebase and Google Sign In objects
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -24,23 +28,21 @@ class AuthManager {
     // GoogleSignIn object, this is used for the Google Sign In flow and Calendar access
     scopes: [
       'email',
-      'https://www.googleapis.com/auth/calendar.events.readonly',
+      CalendarApi.calendarReadonlyScope,
     ],
     clientId: _clientId,
   );
 
   // Public getters for the current user and auth state
   User? get _currentUser => _firebaseAuth.currentUser;
-  DocumentReference? get _currentUserRef =>
+  DocumentReference get _currentUserRef =>
       FirebaseFirestore.instance.collection('users').doc(_currentUser?.uid);
   Stream<User?> get userChanges => _firebaseAuth.userChanges();
 
   Future<UserCredential?> signInAnonymously() async {
     try {
       UserCredential userCredential = await _firebaseAuth.signInAnonymously();
-      if (kDebugMode) {
-        initializeUserData(_currentUser!, _currentUserRef!);
-      }
+      createNewUser();
       return userCredential;
     } catch (e) {
       if (kDebugMode) {
@@ -65,6 +67,8 @@ class AuthManager {
         idToken: googleAuth?.idToken,
       );
 
+      createNewUser();
+
       return credential;
     } catch (e) {
       if (kDebugMode) {
@@ -72,6 +76,59 @@ class AuthManager {
       }
       return null;
     }
+  }
+
+  Future<void> createNewUser() async {
+    var userDoc = await _currentUserRef.get();
+    var currentUser = _currentUser;
+    if (!userDoc.exists && currentUser != null) {
+      final newUser = UserDataModel(
+        friends: [],
+        requestsInbox: [],
+        requestsOutgoing: [],
+        availability: "",
+        displayName: currentUser.uid,
+        id: currentUser.uid,
+      );
+      await _currentUserRef.set(newUser.toMap());
+    }
+  }
+
+  // Updates the user data with the given user object
+  Future<void> _updateUserInfo() async {
+    // Update the user info with the credential user
+    // gets the current user data
+    var userDoc = await _currentUserRef.get();
+    // if userdoc is null create a new user
+    if (!userDoc.exists) {
+      await createNewUser();
+      userDoc = await _currentUserRef.get();
+    }
+
+    final currentUser =
+        UserDataModel.fromMap(userDoc.data() as Map<String, dynamic>);
+
+    // if currentUser is null, return
+    if (_currentUser == null) return;
+    // potentially gets new user data
+    final displayName = _currentUser!.providerData[0].displayName;
+    final email = _currentUser!.providerData[0].email;
+    final profilePictureUrl = _currentUser!.providerData[0].photoURL;
+
+    // creates a new user object with the new data
+    final newUser = UserDataModel(
+      displayName: displayName ?? currentUser.displayName,
+      email: email ?? currentUser.email,
+      profilePictureUrl: profilePictureUrl ?? currentUser.profilePictureUrl,
+      availability: currentUser.availability,
+      id: currentUser.id,
+      friends: currentUser.friends,
+      requestsInbox: currentUser.requestsInbox,
+      requestsOutgoing: currentUser.requestsOutgoing,
+    );
+
+    _currentUserRef.update(newUser.toMap());
+    CalendarFetcher().updateUserData(_currentUserRef);
   }
 
   Future<void> signInOrLinkWithGoogle() async {
@@ -89,10 +146,12 @@ class AuthManager {
         // Otherwise, sign in with Google credential
         await _firebaseAuth.signInWithCredential(credential);
       }
+      await _updateUserInfo();
     } on FirebaseAuthException catch (e) {
       await deleteUser();
       // Sign in with Google credential
       await _firebaseAuth.signInWithCredential(credential!);
+      await _updateUserInfo();
       if (kDebugMode) {
         print(e);
       }
@@ -102,16 +161,13 @@ class AuthManager {
   Future<void> deleteUser() async {
     // delete if the user is anonymous
     if (_currentUser?.isAnonymous ?? false) {
-      var friends = _currentUserRef?.collection('friends');
-      if (friends != null) {
-        // delete all friends
-        await friends.get().then((snapshot) {
-          for (DocumentSnapshot ds in snapshot.docs) {
-            ds.reference.delete();
-          }
-        });
-      }
-      await _currentUserRef?.delete(); // delete user data
+      // var friends = _currentUserRef.collection('friends');
+      // await friends.get().then((snapshot) {
+      //   for (DocumentSnapshot ds in snapshot.docs) {
+      //     ds.reference.delete();
+      //   }
+      // });
+      await _currentUserRef.delete(); // delete user data
       await _currentUser?.delete(); // delete user
     }
   }
