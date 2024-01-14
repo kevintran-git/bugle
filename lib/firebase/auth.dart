@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:googleapis/calendar/v3.dart';
 
-
 class AuthManager {
   // Singleton
   static final AuthManager _instance =

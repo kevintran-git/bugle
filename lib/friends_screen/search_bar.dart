@@ -11,7 +11,7 @@ class FriendsSearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final database = Provider.of<FirestoreDatabase>(context);
-      return SliverAppBar (
+    return SliverAppBar(
       clipBehavior: Clip.none, // content won't be clipped
       shape: const StadiumBorder(),
       elevation: 0,
@@ -21,12 +21,15 @@ class FriendsSearchBar extends StatelessWidget {
       title: SearchAnchor.bar(
         barHintText: 'Search for a friend',
         //barLeading: _buildLeading(context),
-        barTrailing: const [AccountButton(),],
-        suggestionsBuilder: (BuildContext context, SearchController controller) {
+        barTrailing: const [
+          AccountButton(),
+        ],
+        suggestionsBuilder:
+            (BuildContext context, SearchController controller) {
           return _buildSuggestions(context, controller, database);
         },
       ),
-    );  
+    );
   }
 
   // Widget _buildLeading(BuildContext context) {
@@ -85,12 +88,15 @@ class FriendsSearchBar extends StatelessWidget {
 
             // Return a list of widgets that map each user to a UserTile widget
             return ListView.builder(
-              shrinkWrap: true,
+                shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: users.length,
-              itemBuilder: (BuildContext context, int index){
-                  return UserTile(user: users[index], isEmailSearch: isEmailSearch, database: database);
-            });
+                itemBuilder: (BuildContext context, int index) {
+                  return UserTile(
+                      user: users[index],
+                      isEmailSearch: isEmailSearch,
+                      database: database);
+                });
           } else if (snapshot.hasError) {
             // If the snapshot has an error, return a Text widget with the error message
             return Text(snapshot.error.toString());
@@ -109,8 +115,6 @@ class FriendsSearchBar extends StatelessWidget {
 
     // Check if the query contains an @ symbol
     //bool isEmailSearch = query.contains('@');
-
- 
 
     // // Declare a future to store the async operation of searching users
     // Future<List<UserDataModel>> future;
@@ -135,11 +139,16 @@ class UserTile extends StatelessWidget {
   final bool isEmailSearch;
   final FirestoreDatabase database;
 
-  const UserTile({super.key, required this.user, required this.isEmailSearch, required this.database});
+  const UserTile(
+      {super.key,
+      required this.user,
+      required this.isEmailSearch,
+      required this.database});
 
   @override
   Widget build(BuildContext context) {
-    return ListTile( // user icon if they have one or const Icon(Icons.person) if they don't
+    return ListTile(
+      // user icon if they have one or const Icon(Icons.person) if they don't
       leading: user.profilePictureUrl != null
           ? CircleAvatar(
               backgroundImage: NetworkImage(user.profilePictureUrl ?? ""),

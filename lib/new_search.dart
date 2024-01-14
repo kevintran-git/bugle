@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 /// Flutter code sample for pinned [SearchAnchor] while scrolling.
@@ -19,8 +18,11 @@ class _PinnedSearchBarAppState extends State<PinnedSearchBarApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-          useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple, shadow: Colors.transparent,),
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.deepPurple,
+          shadow: Colors.transparent,
+        ),
       ),
       home: Scaffold(
         body: SafeArea(
@@ -33,13 +35,13 @@ class _PinnedSearchBarAppState extends State<PinnedSearchBarApp> {
                 titleSpacing: 5.0,
                 backgroundColor: Colors.transparent,
                 floating:
-                true, // We can also uncomment this line and set `pinned` to true to see a pinned search bar.
+                    true, // We can also uncomment this line and set `pinned` to true to see a pinned search bar.
                 title: SearchAnchor.bar(
                   suggestionsBuilder:
                       (BuildContext context, SearchController controller) {
                     return List<Widget>.generate(
                       5,
-                          (int index) {
+                      (int index) {
                         return ListTile(
                           titleAlignment: ListTileTitleAlignment.center,
                           title: Text('Initial list item $index'),

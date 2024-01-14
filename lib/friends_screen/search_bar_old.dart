@@ -28,20 +28,24 @@ class _FloatingSearchBarState extends State<FloatingSearchBar> {
               left: 16.0,
               right: 16.0,
               child: SearchBar(
-                leading: Builder( // this builder is needed to provide a context for the IconButton below
+                leading: Builder(
+                  // this builder is needed to provide a context for the IconButton below
                   builder: (context) {
                     return IconButton(
                       icon: const Icon(Icons.menu),
                       onPressed: () {
                         // Open the drawer
-                        Scaffold.of(context).openDrawer(); // opens the side drawer
+                        Scaffold.of(context)
+                            .openDrawer(); // opens the side drawer
                       },
                     );
                   },
                 ),
                 controller: _controller,
                 hintText: 'Search',
-                trailing: const [AccountButton(),],
+                trailing: const [
+                  AccountButton(),
+                ],
               ),
             ), // end searchbar
           ],
