@@ -86,7 +86,7 @@ class _ChatFriendWidgetState extends State<ChatFriendWidget> {
           "Hello! I am a scheduling assistant who can look at you and your friend's schedules and find a time that works for both of you. Let me first find some times when you are both free:",
     ));
 
-    var chatbotResponse = await sendToGPT();
+    var chatbotResponse = await sendToPaLM("Hello! I am a scheduling assistant who can look at you and your friend's schedules and find a time that works for both of you. Let me first find some times when you are both free:");
 
     _addMessage(types.TextMessage(
       author: _bot,
@@ -125,7 +125,7 @@ class _ChatFriendWidgetState extends State<ChatFriendWidget> {
     );
 
     _addMessage(textMessage);
-    var chatbotResponse = await sendToGPT();
+    var chatbotResponse = await sendToPaLM(message.text);
 
     _addMessage(types.TextMessage(
       author: _bot,
