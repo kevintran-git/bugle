@@ -5,7 +5,7 @@ class FirestoreDatabase {
   final String uid;
   FirestoreDatabase({required this.uid});
   final userCollection = FirebaseFirestore.instance.collection('users');
- 
+
   // updates a user's data, if the userId is not provided, it will update the current user's data
   Future<void> updateUser(UserDataModel user, [String? userId]) async {
     await userCollection.doc(userId ?? uid).update(user.toMap());
@@ -37,7 +37,8 @@ class FirestoreDatabase {
 
     // check if there is already a pending friend request or if the target user is the current user
     if (targetUser.requestsInbox.contains(uid) ||
-        currentUser.requestsOutgoing.contains(targetUserId) || targetUserId == uid) {
+        currentUser.requestsOutgoing.contains(targetUserId) ||
+        targetUserId == uid) {
       return;
     }
 
@@ -58,7 +59,7 @@ class FirestoreDatabase {
     // check if the target user has sent a friend request to the current user
     if (!targetUser.requestsOutgoing.contains(uid) ||
         !currentUser.requestsInbox.contains(targetUserId)) {
-          // remove friend requests
+      // remove friend requests
       currentUser.requestsInbox.remove(targetUserId);
       targetUser.requestsOutgoing.remove(uid);
       await updateUser(currentUser);
@@ -99,11 +100,15 @@ class FirestoreDatabase {
 
   // stream of the user's friend requests
   Stream<List<UserDataModel>> requestsInboxStream() {
-    return userStream().map((user) => user.requestsInbox).asyncMap(_getUsersByIds);
+    return userStream()
+        .map((user) => user.requestsInbox)
+        .asyncMap(_getUsersByIds);
   }
 
   Stream<List<UserDataModel>> requestsOutgoingStream() {
-    return userStream().map((user) => user.requestsOutgoing).asyncMap(_getUsersByIds);
+    return userStream()
+        .map((user) => user.requestsOutgoing)
+        .asyncMap(_getUsersByIds);
   }
 
   // Searches for users by field that are not already friends with the current user. Returns a list of users that begin with the search query

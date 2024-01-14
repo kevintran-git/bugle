@@ -75,9 +75,13 @@ class FriendsListSliver extends StatelessWidget {
   const FriendsListSliver({Key? key}) : super(key: key);
 
   Widget friendsListTile(UserDataModel friend, BuildContext context) {
-    final status = friend.email == null ? 'Anonymous' : "@${friend.email?.substring(0, friend.email?.indexOf('@'))}";
+    final status = friend.email == null
+        ? 'Anonymous'
+        : "@${friend.email?.substring(0, friend.email?.indexOf('@'))}";
     return ListTile(
-      leading: CircleAvatar(backgroundImage: NetworkImage(friend.profilePictureUrl ?? ''),),
+      leading: CircleAvatar(
+        backgroundImage: NetworkImage(friend.profilePictureUrl ?? ''),
+      ),
       title: Text(friend.displayName,
           style: const TextStyle(fontWeight: FontWeight.w400)),
       // thinner text. truncate to fit on one line
@@ -88,8 +92,7 @@ class FriendsListSliver extends StatelessWidget {
       ),
       // onclick
       onTap: () {
-        Navigator.pushNamed(context, '/friendchat',
-            arguments: friend);
+        Navigator.pushNamed(context, '/friendchat', arguments: friend);
       },
     );
   }
@@ -131,7 +134,9 @@ class FriendsListSliver extends StatelessWidget {
                       // A title widget that shows the display name of the request user
                       title: Text(requestUser.displayName),
                       // A subtitle widget that shows the email of the request user
-                      subtitle: Text(requestUser.email == null ? 'Anonymous' : "@${requestUser.email?.substring(0, requestUser.email?.indexOf('@'))}"),
+                      subtitle: Text(requestUser.email == null
+                          ? 'Anonymous'
+                          : "@${requestUser.email?.substring(0, requestUser.email?.indexOf('@'))}"),
                       // A trailing widget that shows two buttons for accepting and declining the request
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
