@@ -5,6 +5,7 @@ import 'package:bugle/firebase/auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:extension_google_sign_in_as_googleapis_auth/extension_google_sign_in_as_googleapis_auth.dart';
 import 'package:googleapis/calendar/v3.dart';
+import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class CalendarFetcher {
   static final CalendarFetcher _instance = CalendarFetcher._internal();
@@ -14,11 +15,13 @@ class CalendarFetcher {
   void updateUserData(DocumentReference<Object?> userRef) async {
     var events = await fetchCalendars();
     if (events == null) return;
-    userRef.update({'availability': events});
+    userRef.update({
+      'availability': events.map((e) => {eventToJson(e)}).join("\n")
+    });
   }
 
   // A method to fetch the user's events for the next week from all their calendars and return them as a JSON string
-  Future<String?> fetchCalendars() async {
+  Future<List<Event>?> fetchCalendars() async {
     var authenticatedClient =
         await AuthManager().googleSignIn.authenticatedClient();
     if (authenticatedClient == null) return null;
@@ -27,12 +30,11 @@ class CalendarFetcher {
     // get all the ids of the calendars, filter out null ids
     var calendarIds = calendars.items?.map((e) => e.id).toList();
     if (calendarIds == null) return null;
-    var events = await _fetchEvents(calendarApi, calendarIds);
-    return events;
+    return fetchEvents(calendarApi, calendarIds);
   }
 
   // A method to fetch the user's calendar events
-  Future<String> _fetchEvents(
+  Future<List<Event>> fetchEvents(
       CalendarApi calendarApi, List<String?> calendarIds) async {
     // Get the start and end of today in UTC
     var now = DateTime.now();
@@ -45,6 +47,10 @@ class CalendarFetcher {
     // For each calendar, get the events for today
     for (var calId in calendarIds) {
       if (calId == null) continue;
+      print("fetching events for calendar $calId");
+      if (calId == "jasminepadilla2003@gmail.com") {
+        continue;
+      }
       var calEvents = await calendarApi.events.list(calId,
           timeMin: startOfDay,
           timeMax: endOfDay,
@@ -65,14 +71,10 @@ class CalendarFetcher {
     }
 
     // filter out events that have a null or empty start or end time
-    var events = allEvents
-        .where((e) => e.start?.dateTime != null && e.end?.dateTime != null)
-        .map((e) => {eventToJson(e)})
-        .join("\n");
-
-    // ignore: avoid_print
-    print(events);
-    return events;
+    return allEvents
+        .where((element) =>
+            element.start?.dateTime != null && element.end?.dateTime != null)
+        .toList();
   }
 
   // This code block defines a function named eventToJson that takes an Event object as input and returns a JSON-encoded string.
@@ -102,5 +104,39 @@ class CalendarFetcher {
     };
 
     return jsonEncode(body);
+  }
+}
+
+class GoogleDataSource extends CalendarDataSource {
+  // take in a list of events for the constructor
+  GoogleDataSource(List<Event> events) {
+    appointments = events;
+  }
+
+  @override
+  DateTime getStartTime(int index) {
+    return appointments![index].start?.dateTime ?? DateTime.now();
+  }
+
+  @override
+  DateTime getEndTime(int index) {
+    return appointments![index].end?.dateTime ?? DateTime.now();
+  }
+
+  @override
+  String getSubject(int index) {
+    return appointments![index].summary ?? 'No title';
+  }
+
+  @override
+  // getNotes returns the description of the event
+  String? getNotes(int index) {
+    return appointments![index].description;
+  }
+
+  @override
+  // get location returns the location of the event
+  String? getLocation(int index) {
+    return appointments![index].location;
   }
 }

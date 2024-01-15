@@ -1,3 +1,4 @@
+import 'package:bugle/calendar.dart';
 import 'package:bugle/chat.dart';
 import 'package:bugle/firebase/auth_wrapper.dart';
 import 'package:bugle/friends_screen/friends_screen.dart';
@@ -23,7 +24,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const seedColor = Colors.deepPurple;
-
     const List<ResponsiveNavigationDestination> destinations =
         <ResponsiveNavigationDestination>[
       ResponsiveNavigationDestination(
@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
         icon: Icon(Icons.calendar_month_rounded),
         selectedIcon: Icon(Icons.calendar_month),
         title: 'Availability',
-        screen: Placeholder(),
+        screen: WeekView(),
       ),
     ];
 
@@ -71,62 +71,6 @@ class MyApp extends StatelessWidget {
             shadow: Colors.transparent),
       ),
       themeMode: ThemeMode.system, // Follow system theme
-      // home: const AuthWrapper(child: FriendsScreen()),
     );
-    // Define the navigation items for the responsive navigation layout.
-    // Each item contains an icon, a selected icon, a title, and a screen to navigate to.
-
-// This code creates a Material 3 theme and a bottom navigation bar.
-// It also creates a ChangeNotifierProvider and a Consumer for app state.
-// The app state object is used to track which navigation item is selected.
-    // return ChangeNotifierProvider(
-    //   create: (context) => MyAppState(),
-    //   child: MaterialApp(
-    //     title: 'Bugle',
-    //     debugShowCheckedModeBanner: false, // Remove debug banner
-    //     theme: ThemeData(
-    //       useMaterial3: true, // Enable Material 3 theme
-    //       colorScheme: ColorScheme.fromSeed(
-    //           seedColor: seedColor,
-    //           brightness: Brightness.light,
-    //           shadow: Colors.transparent),
-    //     ),
-    //     darkTheme: ThemeData(
-    //       useMaterial3: true, // Enable Material 3 theme
-    //       colorScheme: ColorScheme.fromSeed(
-    //           seedColor: seedColor,
-    //           brightness: Brightness.dark,
-    //           shadow: Colors.transparent),
-    //     ),
-    //     themeMode: ThemeMode.system, // Follow system theme
-    //     home: Consumer<MyAppState>(
-    //       // Use a Consumer to access app state
-    //       builder: (context, appState, child) {
-    //         // The builder rebuilds the layout when notifyListeners() is called
-    //         return ResponsiveNavigationLayout(
-    //           selectedIndex: appState.selectedIndex,
-    //           destinations: destinations,
-    //           onItemSelected: appState.onItemSelected,
-    //         );
-    //       },
-    //     ),
-    //   ),
-    // );
   }
 }
-
-// /// This is the main application class.
-// /// This class is used to control the state of the application.
-// class MyAppState extends ChangeNotifier {
-//   int _selectedIndex =
-//       0; // This is the current selected index in the navigation bar.
-
-//   int get selectedIndex =>
-//       _selectedIndex; // This getter is used to access the current selected index.
-
-//   void onItemSelected(int index) {
-//     // This method is called when a navigation item is selected.
-//     _selectedIndex = index;
-//     notifyListeners(); // This notifies the listeners, which will rebuild the layout.
-//   }
-//}
