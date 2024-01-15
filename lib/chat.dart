@@ -4,14 +4,13 @@ import 'package:bugle/api/palm_api.dart';
 import 'package:bugle/firebase/firestore.dart';
 import 'package:bugle/models/data_models.dart';
 import 'package:dart_openai/dart_openai.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ChatFriendWidget extends StatefulWidget {
-  const ChatFriendWidget({Key? key}) : super(key: key);
+  const ChatFriendWidget({super.key});
   static const routeName = '/friendchat';
 
   @override

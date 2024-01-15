@@ -72,7 +72,7 @@ class FriendsDrawer extends StatelessWidget {
 }
 
 class FriendsListSliver extends StatelessWidget {
-  const FriendsListSliver({Key? key}) : super(key: key);
+  const FriendsListSliver({super.key});
 
   Widget friendsListTile(UserDataModel friend, BuildContext context) {
     final status = friend.email == null ? 'Anonymous' : "@${friend.email?.substring(0, friend.email?.indexOf('@'))}";

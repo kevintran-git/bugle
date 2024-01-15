@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 class FloatingSearchBar extends StatefulWidget {
   final Widget child;
 
-  const FloatingSearchBar({Key? key, required this.child}) : super(key: key);
+  const FloatingSearchBar({super.key, required this.child});
 
   @override
   State<FloatingSearchBar> createState() => _FloatingSearchBarState();

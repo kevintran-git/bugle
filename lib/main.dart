@@ -50,9 +50,10 @@ class MyApp extends StatelessWidget {
       title: 'Bugle',
       initialRoute: '/',
       routes: {
-        '/': (context) => ResponsiveNavigationLayout(selectedIndex: 0, destinations: destinations, onItemSelected: (_) {},),
-        //'/chat': (context) => const ChatWidget(),
-        '/friendchat': (context) => const AuthWrapper(child: ChatFriendWidget()),
+        '/': (context) =>
+            const ResponsiveNavigationController(allDestinations: destinations),
+        '/friendchat': (context) =>
+            const AuthWrapper(child: ChatFriendWidget()),
       },
       debugShowCheckedModeBanner: false, // Remove debug banner
       theme: ThemeData(
@@ -74,7 +75,6 @@ class MyApp extends StatelessWidget {
     );
     // Define the navigation items for the responsive navigation layout.
     // Each item contains an icon, a selected icon, a title, and a screen to navigate to.
-
 
 // This code creates a Material 3 theme and a bottom navigation bar.
 // It also creates a ChangeNotifierProvider and a Consumer for app state.
